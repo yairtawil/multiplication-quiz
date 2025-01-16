@@ -2,6 +2,7 @@ export enum BoardSize {
   Small = 16,
   Medium = 32,
   Large = 64,
+  SuperLarge = 128,
 }
 
 const Board = ({ size }: { size: BoardSize }) => {
