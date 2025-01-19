@@ -12,7 +12,7 @@ const shuffleArr = (array: string[]): string[] => {
   return arr
 }
 
-export const generateMultiplicationTableQuestion = (): Question => {
+export const generateMultiplicationQuestion = (): Question => {
   const a = Math.floor(Math.random() * 10) + 1
   const b = Math.floor(Math.random() * 10) + 1
 
@@ -40,9 +40,5 @@ export const generateMultiplicationTableQuestion = (): Question => {
 }
 
 export const generateGame = ({ size }: { size: number }): Question[] => {
-  // need uniq questions
-
-  return Array.from({ length: size }, () =>
-    generateMultiplicationTableQuestion(),
-  )
+  return Array.from({ length: size }, () => generateMultiplicationQuestion())
 }

@@ -28,7 +28,7 @@ export default function SearchAppBar() {
               textAlign: 'left',
             })}
           >
-            🌸 Multiplication Table Game 🌸
+            🌸 Multiplication Quiz 🌸
           </Typography>
 
           <Stack
