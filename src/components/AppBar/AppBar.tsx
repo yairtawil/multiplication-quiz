@@ -4,21 +4,21 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 import { Slider, Stack } from '@mui/material'
 import { VolumeDown, VolumeUp } from '@mui/icons-material'
-import styles from '../ai/MultiplicationGame.module.scss'
+
+//
+// color: #d81b60;
+// text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.3);
+// margin-bottom: 20px;
+// font-weight: bold;
+// text-align: center;
 
 export default function SearchAppBar() {
   return (
     <Box sx={{ width: '100%' }}>
-      <AppBar
-        position="static"
-        sx={(theme) => ({
-          // background: theme.palette.background.paper,
-        })}
-      >
+      <AppBar position="static">
         <Toolbar>
           <Typography
             variant="h5"
-            className={styles.gameTitle}
             sx={(theme) => ({
               flexGrow: 1,
               display: { xs: 'none', sm: 'block' },

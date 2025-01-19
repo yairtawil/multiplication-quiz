@@ -1,8 +1,7 @@
-import Board from './Board/Board.tsx'
 import AppBar from './AppBar/AppBar.tsx'
-import { Box, createTheme, LinearProgress, ThemeProvider } from '@mui/material'
+import { Box, createTheme, ThemeProvider } from '@mui/material'
 import { orange, pink, purple } from '@mui/material/colors'
-import MultiplicationGame from './ai/MultiplicationGame.tsx'
+import Question from './Question/Question'
 
 const darkTheme = createTheme({
   palette: {
@@ -54,7 +53,7 @@ function App() {
       >
         <AppBar />
 
-        <MultiplicationGame />
+        <Question />
       </Box>
     </ThemeProvider>
   )

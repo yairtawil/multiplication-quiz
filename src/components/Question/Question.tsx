@@ -7,11 +7,11 @@ import {
   Paper,
   LinearProgress,
 } from '@mui/material'
-import styles from './MultiplicationGame.module.scss'
+import styles from './Question.module.scss'
 import { useAtom, useAtomValue } from 'jotai/index'
 import { currentQuestionAtom, questionsAtom } from '../../state/game.ts'
 
-const MultiplicationGame: React.FC = () => {
+const Question: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<string>('') // "correct" or "wrong"
   const [timer, setTimer] = useState<number>(30) // Countdown timer
@@ -151,4 +151,4 @@ const MultiplicationGame: React.FC = () => {
   )
 }
 
-export default MultiplicationGame
+export default Question
