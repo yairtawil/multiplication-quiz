@@ -1,3 +1,72 @@
 body {
     margin: 0;
 }
+
+
+
+/* App.css */
+body {
+    margin: 0;
+    font-family: 'Comic Sans MS', sans-serif;
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fbc2eb);
+    animation: backgroundAnimation 10s infinite;
+}
+
+@keyframes backgroundAnimation {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.game-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.game-title {
+    font-size: 2.5rem;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.question-container {
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.question-text {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.options-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.answer-btn {
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 15px 30px;
+    color: #fff;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #42a5f5, #478ed1);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.answer-btn:hover {
+    transform: scale(1.1);
+    background: linear-gradient(45deg, #478ed1, #5c6bc0);
+}
+
+.footer {
+    margin-top: 30px;
+    color: #fff;
+    font-size: 1.2rem;
+}

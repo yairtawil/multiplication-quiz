@@ -1,22 +1,21 @@
 import Board from './Board/Board.tsx'
 import AppBar from './AppBar/AppBar.tsx'
-import { Box, createTheme, ThemeProvider } from '@mui/material'
-import { orange, purple } from '@mui/material/colors'
+import { Box, createTheme, LinearProgress, ThemeProvider } from '@mui/material'
+import { orange, pink, purple } from '@mui/material/colors'
+import MultiplicationGame from './ai/MultiplicationGame.tsx'
 
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     background: {
-      default: '#000000',
-      paper: '#121212',
+      default: 'linear-gradient(135deg, #9f008d, #555555)',
+      paper: pink[900],
     },
     primary: {
-      main: purple[500],
-      dark: purple[700],
+      main: purple[900],
     },
     secondary: {
       main: orange[500],
-      dark: orange[700],
     },
     grey: {
       50: '#f5f5f5',
@@ -29,7 +28,7 @@ const darkTheme = createTheme({
       700: '#424242',
     },
     text: {
-      primary: '#ffffff',
+      primary: pink[100],
       secondary: '#ffffff',
     },
   },
@@ -43,7 +42,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <Box
         sx={(theme) => ({
-          backgroundColor: theme.palette.background.default,
+          background: theme.palette.background.default,
           color: theme.palette.text.primary,
           width: '100vw',
           height: '100vh',
@@ -55,7 +54,7 @@ function App() {
       >
         <AppBar />
 
-        <Board />
+        <MultiplicationGame />
       </Box>
     </ThemeProvider>
   )

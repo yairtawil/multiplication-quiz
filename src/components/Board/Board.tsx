@@ -1,5 +1,15 @@
-import { Box, Button, LinearProgress, Typography } from '@mui/material'
-import { CountdownCircleTimer } from 'react-countdown-circle-timer'
+import {
+  Box,
+  Button,
+  LinearProgress,
+  Typography,
+  useTheme,
+} from '@mui/material'
+import {
+  ColorFormat,
+  ColorHex,
+  CountdownCircleTimer,
+} from 'react-countdown-circle-timer'
 import {
   currentQuestionAtom,
   durationAtom,
@@ -29,7 +39,16 @@ const Board = () => {
       }
     }, 1000)
   }
-  console.log('q', questions)
+
+  const theme = useTheme()
+
+  const colors: ColorFormat = [
+    theme.palette.primary.dark,
+    theme.palette.secondary.dark,
+    theme.palette.info.dark,
+    theme.palette.warning.dark,
+  ]
+
   return (
     <Box
       sx={{
@@ -48,7 +67,7 @@ const Board = () => {
           width: '100%',
         }}
       >
-        <LinearProgress variant="determinate" value={50} />
+        <LinearProgress color="secondary" />
       </Box>
 
       <Box
@@ -58,13 +77,16 @@ const Board = () => {
           alignItems: 'center',
         }}
       >
+        <LinearProgress color="secondary" />
+
         <CountdownCircleTimer
           isPlaying
           key={currentQuestion.toString()}
           size={100}
           duration={duration}
-          colors={['#004777', '#F7B801', '#A30000', '#A30000']}
+          colors={colors}
           colorsTime={[30, 20, 10, 0]}
+          strokeWidth={2}
         >
           {({ remainingTime }) => remainingTime}
         </CountdownCircleTimer>
@@ -98,7 +120,7 @@ const Board = () => {
         >
           {question.answers.map((answer, answerIndex) => (
             <Button
-              sx={(theme) => ({
+              sx={() => ({
                 width: 300,
                 height: 50,
               })}
