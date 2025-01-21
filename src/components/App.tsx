@@ -1,44 +1,46 @@
 import AppBar from './AppBar/AppBar.tsx'
-import { Box, createTheme, ThemeProvider } from '@mui/material'
-import { orange, pink, purple } from '@mui/material/colors'
-import Question from './Question/Question'
-
-const darkTheme = createTheme({
-  palette: {
-    mode: 'light',
-    background: {
-      default: 'linear-gradient(135deg, #9f008d, #555555)',
-      paper: pink[900],
-    },
-    primary: {
-      main: purple[900],
-    },
-    secondary: {
-      main: orange[500],
-    },
-    grey: {
-      50: '#f5f5f5',
-      100: '#eeeeee',
-      200: '#e0e0e0',
-      300: '#bdbdbd',
-      400: '#9e9e9e',
-      500: '#757575',
-      600: '#616161',
-      700: '#424242',
-    },
-    text: {
-      primary: pink[100],
-      secondary: '#ffffff',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, sans-serif',
-  },
-})
+import { Box, ThemeProvider } from '@mui/material'
+import { useAtom, useAtomValue } from 'jotai'
+import { difficultyAtom, questionsAtom, durationAtom } from '../state/game.ts'
+import { Difficulty } from '../types'
+import GameMenu from './GameMenu/GameMenu.tsx'
+import { themeAtom } from '../state/ui.ts'
+import { allThemes } from '../utils/themes.ts'
+import { generateGame } from '../utils'
+import Game from './Game/Game.tsx'
 
 function App() {
+  const [difficulty, setDifficulty] = useAtom(difficultyAtom)
+  const themeKey = useAtomValue(themeAtom)
+  const setQuestions = useAtom(questionsAtom)[1]
+  const setDuration = useAtom(durationAtom)[1]
+
+  const startGame = (selectedDifficulty: Difficulty) => {
+    console.log(`Starting game with difficulty: ${selectedDifficulty}`)
+
+    // Configure game based on difficulty
+    let numQuestions = 10
+    let timePerQuestion = 30
+
+    if (selectedDifficulty === Difficulty.EASY) {
+      numQuestions = 5
+      timePerQuestion = 45
+    } else if (selectedDifficulty === Difficulty.MEDIUM) {
+      numQuestions = 10
+      timePerQuestion = 30
+    } else if (selectedDifficulty === Difficulty.HARD) {
+      numQuestions = 15
+      timePerQuestion = 20
+    }
+
+    // Update the state atoms
+    setQuestions(generateGame({ size: numQuestions }))
+    setDuration(timePerQuestion)
+    setDifficulty(selectedDifficulty) // Set the selected difficulty
+  }
+
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={allThemes[themeKey]}>
       <Box
         sx={(theme) => ({
           background: theme.palette.background.default,
@@ -53,7 +55,7 @@ function App() {
       >
         <AppBar />
 
-        <Question />
+        {!difficulty ? <GameMenu onStartGame={startGame} /> : <Game />}
       </Box>
     </ThemeProvider>
   )
