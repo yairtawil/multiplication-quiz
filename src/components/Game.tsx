@@ -1,14 +1,19 @@
 import React, { useState } from 'react'
 import { Box, Button, Grid, Paper, Typography } from '@mui/material'
-import { useAtom, useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import {
+  answerTimesAtom,
   currentQuestionAtom,
   durationAtom,
   questionsAtom,
-} from '../../state/game.ts'
+} from '../state/game.ts'
 import Footer from './Footer.tsx'
 
-const Game: React.FC = () => {
+interface GameProps {
+  onGameComplete: () => void // Callback for when the game is completed
+}
+
+const Game: React.FC<GameProps> = ({ onGameComplete }) => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null)
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | ''>('')
   const duration = useAtomValue(durationAtom)
@@ -16,6 +21,12 @@ const Game: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false)
   const [currentQuestionIndex, setCurrentQuestionIndex] =
     useAtom(currentQuestionAtom)
+  const setAnswerTimes = useSetAtom(answerTimesAtom)
+  const questionDuration = useAtomValue(durationAtom)
+
+  // Sounds
+  const correctSound = new Audio('/multiplication-quiz/sounds/correct.mp3') // Path to correct answer sound
+  const wrongSound = new Audio('/multiplication-quiz/sounds/wrong.mp3') // Path to wrong answer sound
 
   const questions = useAtomValue(questionsAtom)
   const currentQuestion = questions[currentQuestionIndex]!
@@ -23,13 +34,22 @@ const Game: React.FC = () => {
   // Handle answer selection
   const handleAnswerClick = (answer: string) => {
     setSelectedAnswer(answer)
+    const timeTakenForQuestion = questionDuration - timer
+    setAnswerTimes((prev) => [...prev, timeTakenForQuestion])
 
     if (answer === currentQuestion.correctAnswer) {
       setFeedback('correct')
+      correctSound.play() // Play correct answer sound
+
       // Move to the next question with animation after 1 second
       setTimeout(() => {
         setIsTransitioning(true) // Start transition
         setTimeout(() => {
+          if (currentQuestionIndex + 1 >= questions.length) {
+            onGameComplete() // Game is complete
+            return
+          }
+
           setCurrentQuestionIndex(
             (prevIndex) => (prevIndex + 1) % questions.length,
           ) // Move to next question
@@ -41,6 +61,7 @@ const Game: React.FC = () => {
       }, 1000)
     } else {
       setFeedback('wrong')
+      wrongSound.play()
       // Reset feedback after 1 second
       setTimeout(() => {
         setSelectedAnswer(null)

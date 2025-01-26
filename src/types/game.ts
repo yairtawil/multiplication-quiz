@@ -9,3 +9,9 @@ export type Question = {
   answers: string[]
   correctAnswer: string
 }
+
+export enum GamePhase {
+  MENU = 'menu',
+  GAME = 'game',
+  SUMMARY = 'summary',
+}

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import { Difficulty } from '../../types/game.ts'
+import { Difficulty } from '../types'
 
 interface GameMenuProps {
   onStartGame: (difficulty: Difficulty) => void

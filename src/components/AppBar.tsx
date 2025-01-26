@@ -13,8 +13,8 @@ import {
 } from '@mui/material'
 import { VolumeDown, VolumeUp } from '@mui/icons-material'
 import { useSetAtom } from 'jotai'
-import { themeAtom } from '../../state/ui.ts'
-import { ThemeKey } from '../../types/ui.ts'
+import { themeAtom } from '../state/ui.ts'
+import { ThemeKey } from '../types/ui.ts'
 
 const SearchAppBar: React.FC = () => {
   const theme = useTheme()

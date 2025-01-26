@@ -1,19 +1,31 @@
-import AppBar from './AppBar/AppBar.tsx'
+import AppBar from './AppBar.tsx'
 import { Box, ThemeProvider } from '@mui/material'
-import { useAtom, useAtomValue } from 'jotai'
-import { difficultyAtom, questionsAtom, durationAtom } from '../state/game.ts'
-import { Difficulty } from '../types'
-import GameMenu from './GameMenu/GameMenu.tsx'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import {
+  answerTimesAtom,
+  currentQuestionAtom,
+  difficultyAtom,
+  durationAtom,
+  gamePhaseAtom,
+  questionsAtom,
+} from '../state/game.ts'
+import { Difficulty, GamePhase } from '../types'
+import GameMenu from './GameMenu.tsx'
 import { themeAtom } from '../state/ui.ts'
 import { allThemes } from '../utils/themes.ts'
 import { generateGame } from '../utils'
-import Game from './Game/Game.tsx'
+import Game from './Game.tsx'
+import SummaryPage from './SummaryPage.tsx'
 
 function App() {
-  const [difficulty, setDifficulty] = useAtom(difficultyAtom)
+  const setDifficulty = useSetAtom(difficultyAtom)
   const themeKey = useAtomValue(themeAtom)
   const setQuestions = useAtom(questionsAtom)[1]
   const setDuration = useAtom(durationAtom)[1]
+  const setAnswerTimes = useAtom(answerTimesAtom)[1]
+  const answerTimes = useAtomValue(answerTimesAtom)
+  const setCurrentQuestionIndex = useSetAtom(currentQuestionAtom)
+  const [gamePhase, setGamePhase] = useAtom(gamePhaseAtom)
 
   const startGame = (selectedDifficulty: Difficulty) => {
     console.log(`Starting game with difficulty: ${selectedDifficulty}`)
@@ -23,7 +35,7 @@ function App() {
     let timePerQuestion = 30
 
     if (selectedDifficulty === Difficulty.EASY) {
-      numQuestions = 5
+      numQuestions = 2
       timePerQuestion = 45
     } else if (selectedDifficulty === Difficulty.MEDIUM) {
       numQuestions = 10
@@ -35,8 +47,24 @@ function App() {
 
     // Update the state atoms
     setQuestions(generateGame({ size: numQuestions }))
+    setCurrentQuestionIndex(0)
     setDuration(timePerQuestion)
+    setAnswerTimes([]) // Reset the answer times
     setDifficulty(selectedDifficulty) // Set the selected difficulty
+
+    // Move to the game phase
+    setGamePhase(GamePhase.GAME)
+  }
+
+  const finishGame = () => {
+    setGamePhase(GamePhase.SUMMARY) // Move to the summary phase
+  }
+
+  const resetGame = () => {
+    setQuestions([])
+    setDifficulty(null) // Clear the difficulty
+    setAnswerTimes([]) // Reset the answer times
+    setGamePhase(GamePhase.MENU) // Move back to the menu
   }
 
   return (
@@ -55,7 +83,14 @@ function App() {
       >
         <AppBar />
 
-        {!difficulty ? <GameMenu onStartGame={startGame} /> : <Game />}
+        {gamePhase === GamePhase.MENU && <GameMenu onStartGame={startGame} />}
+        {gamePhase === GamePhase.GAME && <Game onGameComplete={finishGame} />}
+        {gamePhase === GamePhase.SUMMARY && (
+          <SummaryPage
+            totalTimeElapsed={answerTimes.reduce((a, b) => a + b, 0)}
+            onRestart={resetGame}
+          />
+        )}
       </Box>
     </ThemeProvider>
   )
