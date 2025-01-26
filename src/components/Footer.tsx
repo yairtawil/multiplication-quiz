@@ -2,7 +2,6 @@ import { Box, LinearProgress, Typography } from '@mui/material'
 import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useAtomValue } from 'jotai/index'
 import { currentQuestionAtom, questionsAtom } from '../state/game.ts'
-import { useAtom } from 'jotai'
 
 const Footer = ({
   timer,
@@ -11,8 +10,7 @@ const Footer = ({
   timer: number
   setTimer: Dispatch<SetStateAction<number>>
 }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] =
-    useAtom(currentQuestionAtom)
+  const currentQuestionIndex = useAtomValue(currentQuestionAtom)
   const questions = useAtomValue(questionsAtom)
   const progress = (currentQuestionIndex / questions.length) * 100
 
@@ -25,7 +23,7 @@ const Footer = ({
         // setCurrentQuestionIndex((prev) => (prev + 1) % questions.length)
       } // Cleanup timeout
     }
-  }, [timer])
+  }, [timer, setTimer])
 
   return (
     <Box
