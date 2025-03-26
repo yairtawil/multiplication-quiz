@@ -15,27 +15,27 @@ const shuffleArr = (array: string[]): string[] => {
 export const generateMultiplicationQuestion = (): Question => {
   const a = Math.floor(Math.random() * 10) + 1
   const b = Math.floor(Math.random() * 10) + 1
+  const correctAnswer = a * b
 
-  let length = 1
-  const answers: string[] = []
+  // Use a Set to store unique incorrect answers
+  const answers = new Set<string>()
+  answers.add(`${correctAnswer}`)
 
-  answers[0] = `${a * b}`
+  while (answers.size < 4) {
+    // Generate incorrect answers
+    const offset = Math.floor(Math.random() * 9) + 1 // Ensure small variations
+    const incorrectAnswer =
+      Math.random() > 0.5
+        ? correctAnswer + offset
+        : Math.max(1, correctAnswer - offset) // Ensure non-negative
 
-  while (length < 4) {
-    const answerPlus = `${a * b + Math.floor(Math.random() * 10)}`
-    const answerMinus = `${a * b - Math.floor(Math.random() * 10)}`
-    const answer = Math.random() > 0.5 ? answerPlus : answerMinus
-
-    if (!answers.includes(answer)) {
-      answers[length] = answer
-      length++
-    }
+    answers.add(`${incorrectAnswer}`)
   }
 
   return {
     text: `${a} x ${b}`,
-    answers: shuffleArr(answers),
-    correctAnswer: `${a * b}`,
+    answers: shuffleArr([...answers]), // Convert Set to Array and shuffle
+    correctAnswer: `${correctAnswer}`,
   }
 }
 
