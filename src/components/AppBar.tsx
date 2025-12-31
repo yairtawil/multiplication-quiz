@@ -25,6 +25,7 @@ import {
   currentQuestionAtom,
   difficultyAtom,
   gamePhaseAtom,
+  livesAtom,
   questionsAtom,
 } from '../state/game.ts'
 import { GamePhase } from '../types/game.ts'
@@ -39,6 +40,7 @@ const SearchAppBar: React.FC = () => {
   const setAnswerTimes = useSetAtom(answerTimesAtom)
   const setCurrentQuestionIndex = useSetAtom(currentQuestionAtom)
   const [volume, setVolume] = useAtom(volumeAtom)
+  const lives = useAtomValue(livesAtom)
 
   const handleRestartGame = () => {
     setQuestions([])
@@ -50,6 +52,19 @@ const SearchAppBar: React.FC = () => {
 
   const handleVolumeChange = (_event: Event, newValue: number | number[]) => {
     setVolume(newValue as number)
+  }
+
+  // Render hearts based on lives remaining
+  const renderHearts = () => {
+    const hearts = []
+    for (let i = 0; i < 3; i++) {
+      hearts.push(
+        <Typography key={i} variant="h5" sx={{ display: 'inline', mx: 0.5 }}>
+          {i < lives ? '❤️' : '🖤'}
+        </Typography>,
+      )
+    }
+    return hearts
   }
 
   return (
@@ -76,6 +91,25 @@ const SearchAppBar: React.FC = () => {
           >
             🌸 Multiplication Quiz 🌸
           </Typography>
+
+          {/* Hearts/Lives - Only show when game is active */}
+          {gamePhase === GamePhase.GAME && (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                mr: 2,
+                padding: 1,
+                borderRadius: 2,
+                backgroundColor: (theme) =>
+                  theme.palette.mode === 'dark'
+                    ? 'rgba(255, 255, 255, 0.1)'
+                    : 'rgba(0, 0, 0, 0.05)',
+              }}
+            >
+              {renderHearts()}
+            </Box>
+          )}
 
           {/* Restart Game Button - Only show when game is active */}
           {gamePhase === GamePhase.GAME && (

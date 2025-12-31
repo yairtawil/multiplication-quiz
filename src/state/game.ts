@@ -8,3 +8,4 @@ export const durationAtom = atom(30) // Default duration is 30 seconds
 export const difficultyAtom = atom<Difficulty | null>(null)
 export const answerTimesAtom = atom<number[]>([]) // Tracks the time taken for each question
 export const gamePhaseAtom = atom<GamePhase>(GamePhase.MENU)
+export const livesAtom = atom(3) // Number of lives/hearts remaining (default 3)

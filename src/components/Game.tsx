@@ -5,6 +5,7 @@ import {
   answerTimesAtom,
   currentQuestionAtom,
   durationAtom,
+  livesAtom,
   questionsAtom,
 } from '../state/game.ts'
 import { volumeAtom } from '../state/ui.ts'
@@ -25,6 +26,7 @@ const Game: React.FC<GameProps> = ({ onGameComplete }) => {
   const setAnswerTimes = useSetAtom(answerTimesAtom)
   const questionDuration = useAtomValue(durationAtom)
   const volume = useAtomValue(volumeAtom) // Get volume from state (0-100)
+  const [lives, setLives] = useAtom(livesAtom) // Get and set lives
 
   // Sounds
   const correctSound = new Audio('/multiplication-quiz/sounds/correct.mp3') // Path to correct answer sound
@@ -46,6 +48,15 @@ const Game: React.FC<GameProps> = ({ onGameComplete }) => {
       }, 500) // Small delay for better UX
     }
   }, [timer, feedback, onGameComplete])
+
+  // Check if lives reach 0 - Game Over
+  useEffect(() => {
+    if (lives <= 0) {
+      setTimeout(() => {
+        onGameComplete()
+      }, 1000) // Small delay to show the last wrong answer
+    }
+  }, [lives, onGameComplete])
 
   // Handle answer selection
   const handleAnswerClick = (answer: string) => {
@@ -78,6 +89,8 @@ const Game: React.FC<GameProps> = ({ onGameComplete }) => {
     } else {
       setFeedback('wrong')
       wrongSound.play()
+      // Reduce lives on wrong answer
+      setLives((prev) => Math.max(0, prev - 1))
       // Reset feedback after 1 second
       setTimeout(() => {
         setSelectedAnswer(null)

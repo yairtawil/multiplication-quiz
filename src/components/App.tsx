@@ -8,6 +8,7 @@ import {
   difficultyAtom,
   durationAtom,
   gamePhaseAtom,
+  livesAtom,
   questionsAtom,
 } from '../state/game.ts'
 import { Difficulty, GamePhase } from '../types'
@@ -30,6 +31,7 @@ function App() {
   const setCurrentQuestionIndex = useSetAtom(currentQuestionAtom)
   const [gamePhase, setGamePhase] = useAtom(gamePhaseAtom)
   const [isGameOver, setIsGameOver] = React.useState(false)
+  const setLives = useSetAtom(livesAtom)
 
   const startGame = (selectedDifficulty: Difficulty) => {
     console.log(`Starting game with difficulty: ${selectedDifficulty}`)
@@ -67,6 +69,7 @@ function App() {
     setDuration(timePerQuestion)
     setAnswerTimes([]) // Reset the answer times
     setDifficulty(selectedDifficulty) // Set the selected difficulty
+    setLives(3) // Reset lives to 3 hearts
 
     // Move to the game phase
     setGamePhase(GamePhase.GAME)
@@ -84,6 +87,7 @@ function App() {
     setDifficulty(null) // Clear the difficulty
     setAnswerTimes([]) // Reset the answer times
     setIsGameOver(false) // Reset game over state
+    setLives(3) // Reset lives to 3 hearts
     setGamePhase(GamePhase.MENU) // Move back to the menu
   }
 
