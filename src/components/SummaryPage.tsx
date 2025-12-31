@@ -16,14 +16,19 @@ import { questionsAtom, answerTimesAtom } from '../state/game.ts'
 interface SummaryPageProps {
   totalTimeElapsed: number
   onRestart: () => void // Callback to restart the game
+  isGameOver?: boolean // True if time ran out, false if completed successfully
 }
 
 const SummaryPage: React.FC<SummaryPageProps> = ({
   totalTimeElapsed,
   onRestart,
+  isGameOver = false,
 }) => {
   const questions = useAtomValue(questionsAtom)
   const answerTimes = useAtomValue(answerTimesAtom)
+
+  const completedQuestions = answerTimes.length
+  const totalQuestions = questions.length
 
   return (
     <Box
@@ -42,8 +47,22 @@ const SummaryPage: React.FC<SummaryPageProps> = ({
         variant="h3"
         sx={{ fontWeight: 'bold', marginBottom: 4, textAlign: 'center' }}
       >
-        🎉 Quiz Summary 🎉
+        {isGameOver ? '⏰ Game Over! ⏰' : '🎉 Quiz Complete! 🎉'}
       </Typography>
+
+      {isGameOver && (
+        <Typography
+          variant="h6"
+          sx={{
+            marginBottom: 3,
+            textAlign: 'center',
+            color: (theme) => theme.palette.error.main,
+          }}
+        >
+          Time's Up! You completed {completedQuestions} out of {totalQuestions}{' '}
+          questions.
+        </Typography>
+      )}
 
       <Paper
         elevation={4}
@@ -55,7 +74,9 @@ const SummaryPage: React.FC<SummaryPageProps> = ({
         }}
       >
         <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-          Total Time: {totalTimeElapsed}s
+          {isGameOver
+            ? `Questions Answered: ${completedQuestions} / ${totalQuestions}`
+            : `Total Time: ${totalTimeElapsed}s`}
         </Typography>
 
         <Table>
@@ -63,16 +84,20 @@ const SummaryPage: React.FC<SummaryPageProps> = ({
             <TableRow>
               <TableCell align="center">Question</TableCell>
               <TableCell align="center">Time (s)</TableCell>
-              <TableCell align="center">Correct?</TableCell>
+              <TableCell align="center">Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {questions.map((question, index) => (
+            {questions.slice(0, completedQuestions).map((question, index) => (
               <TableRow key={index}>
                 <TableCell align="center">{question.text}</TableCell>
-                <TableCell align="center">{answerTimes[index]}s</TableCell>
                 <TableCell align="center">
-                  {answerTimes[index] <= 30 ? '✅' : '❌'}
+                  {answerTimes[index] !== undefined
+                    ? `${answerTimes[index]}s`
+                    : '-'}
+                </TableCell>
+                <TableCell align="center">
+                  {answerTimes[index] !== undefined ? '✅' : '⏱️'}
                 </TableCell>
               </TableRow>
             ))}
@@ -80,8 +105,13 @@ const SummaryPage: React.FC<SummaryPageProps> = ({
         </Table>
       </Paper>
 
-      <Button variant="contained" color="primary" onClick={onRestart}>
-        Restart Game
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={onRestart}
+        sx={{ marginTop: 3, paddingX: 4, paddingY: 1.5, fontSize: '1.1rem' }}
+      >
+        Play Again
       </Button>
     </Box>
   )

@@ -1,3 +1,4 @@
+import React from 'react'
 import AppBar from './AppBar.tsx'
 import { Box, ThemeProvider } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
@@ -12,7 +13,7 @@ import {
 import { Difficulty, GamePhase } from '../types'
 import GameMenu from './GameMenu.tsx'
 import { themeAtom } from '../state/ui.ts'
-import { allThemes } from '../utils/themes.ts'
+import { allThemes } from '../constants/themes.ts'
 import { generateGame } from '../utils'
 import Game from './Game.tsx'
 import SummaryPage from './SummaryPage.tsx'
@@ -24,8 +25,11 @@ function App() {
   const setDuration = useAtom(durationAtom)[1]
   const setAnswerTimes = useAtom(answerTimesAtom)[1]
   const answerTimes = useAtomValue(answerTimesAtom)
+  const questions = useAtomValue(questionsAtom)
+  const currentQuestionIndex = useAtomValue(currentQuestionAtom)
   const setCurrentQuestionIndex = useSetAtom(currentQuestionAtom)
   const [gamePhase, setGamePhase] = useAtom(gamePhaseAtom)
+  const [isGameOver, setIsGameOver] = React.useState(false)
 
   const startGame = (selectedDifficulty: Difficulty) => {
     console.log(`Starting game with difficulty: ${selectedDifficulty}`)
@@ -33,20 +37,32 @@ function App() {
     // Configure game based on difficulty
     let numQuestions = 10
     let timePerQuestion = 30
+    let maxNumber = 10
 
-    if (selectedDifficulty === Difficulty.EASY) {
-      numQuestions = 2
-      timePerQuestion = 45
-    } else if (selectedDifficulty === Difficulty.MEDIUM) {
+    if (selectedDifficulty === Difficulty.SUPER_EASY) {
+      numQuestions = 5
+      timePerQuestion = 60
+      maxNumber = 5 // Numbers from 1-5 (e.g., 2×4, 3×5)
+    } else if (selectedDifficulty === Difficulty.EASY) {
       numQuestions = 10
+      timePerQuestion = 50
+      maxNumber = 6 // Numbers from 1-6 (e.g., 4×6, 5×3)
+    } else if (selectedDifficulty === Difficulty.MEDIUM) {
+      numQuestions = 15
       timePerQuestion = 30
+      maxNumber = 9 // Numbers from 1-9
     } else if (selectedDifficulty === Difficulty.HARD) {
       numQuestions = 15
-      timePerQuestion = 20
+      timePerQuestion = 15
+      maxNumber = 12 // Numbers from 1-12
+    } else if (selectedDifficulty === Difficulty.SUPER_HARD) {
+      numQuestions = 20
+      timePerQuestion = 8
+      maxNumber = 15 // Numbers from 1-15
     }
 
     // Update the state atoms
-    setQuestions(generateGame({ size: numQuestions }))
+    setQuestions(generateGame({ size: numQuestions, maxNumber }))
     setCurrentQuestionIndex(0)
     setDuration(timePerQuestion)
     setAnswerTimes([]) // Reset the answer times
@@ -57,6 +73,9 @@ function App() {
   }
 
   const finishGame = () => {
+    // Check if player completed all questions or time ran out
+    const completedAllQuestions = currentQuestionIndex + 1 >= questions.length
+    setIsGameOver(!completedAllQuestions)
     setGamePhase(GamePhase.SUMMARY) // Move to the summary phase
   }
 
@@ -64,6 +83,7 @@ function App() {
     setQuestions([])
     setDifficulty(null) // Clear the difficulty
     setAnswerTimes([]) // Reset the answer times
+    setIsGameOver(false) // Reset game over state
     setGamePhase(GamePhase.MENU) // Move back to the menu
   }
 
@@ -89,6 +109,7 @@ function App() {
           <SummaryPage
             totalTimeElapsed={answerTimes.reduce((a, b) => a + b, 0)}
             onRestart={resetGame}
+            isGameOver={isGameOver}
           />
         )}
       </Box>

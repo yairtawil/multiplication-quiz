@@ -35,32 +35,68 @@ const GameMenu: React.FC<GameMenuProps> = ({ onStartGame }) => {
           flexDirection: 'column',
           gap: 3,
           width: '100%',
-          maxWidth: '300px',
+          maxWidth: '400px',
         }}
       >
         <Button
           variant="contained"
           size="large"
+          color="success"
+          onClick={() => onStartGame(Difficulty.SUPER_EASY)}
+          sx={{ fontWeight: 'bold' }}
+        >
+          Super Easy
+          <Typography variant="caption" sx={{ ml: 2, opacity: 0.8 }}>
+            (1-5, 5 questions, 60s)
+          </Typography>
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
           color="primary"
           onClick={() => onStartGame(Difficulty.EASY)}
+          sx={{ fontWeight: 'bold' }}
         >
           Easy
+          <Typography variant="caption" sx={{ ml: 2, opacity: 0.8 }}>
+            (1-6, 10 questions, 50s)
+          </Typography>
         </Button>
         <Button
           variant="contained"
           size="large"
           color="secondary"
           onClick={() => onStartGame(Difficulty.MEDIUM)}
+          sx={{ fontWeight: 'bold' }}
         >
           Medium
+          <Typography variant="caption" sx={{ ml: 2, opacity: 0.8 }}>
+            (1-9, 15 questions, 30s)
+          </Typography>
+        </Button>
+        <Button
+          variant="contained"
+          size="large"
+          color="warning"
+          onClick={() => onStartGame(Difficulty.HARD)}
+          sx={{ fontWeight: 'bold' }}
+        >
+          Hard
+          <Typography variant="caption" sx={{ ml: 2, opacity: 0.8 }}>
+            (1-12, 15 questions, 15s)
+          </Typography>
         </Button>
         <Button
           variant="contained"
           size="large"
           color="error"
-          onClick={() => onStartGame(Difficulty.HARD)}
+          onClick={() => onStartGame(Difficulty.SUPER_HARD)}
+          sx={{ fontWeight: 'bold' }}
         >
-          Hard
+          Super Hard
+          <Typography variant="caption" sx={{ ml: 2, opacity: 0.8 }}>
+            (1-15, 20 questions, 8s)
+          </Typography>
         </Button>
       </Box>
     </Box>

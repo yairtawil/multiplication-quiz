@@ -12,9 +12,12 @@ const shuffleArr = (array: string[]): string[] => {
   return arr
 }
 
-export const generateMultiplicationQuestion = (): Question => {
-  const a = Math.floor(Math.random() * 10) + 1
-  const b = Math.floor(Math.random() * 10) + 1
+export const generateMultiplicationQuestion = (
+  maxNumber: number = 10,
+): Question => {
+  // Generate random numbers from 1 to maxNumber (for kids, like 2×4, 3×6, etc.)
+  const a = Math.floor(Math.random() * maxNumber) + 1
+  const b = Math.floor(Math.random() * maxNumber) + 1
   const correctAnswer = a * b
 
   // Use a Set to store unique incorrect answers
@@ -22,8 +25,9 @@ export const generateMultiplicationQuestion = (): Question => {
   answers.add(`${correctAnswer}`)
 
   while (answers.size < 4) {
-    // Generate incorrect answers
-    const offset = Math.floor(Math.random() * 9) + 1 // Ensure small variations
+    // Generate incorrect answers with appropriate variation
+    const variationRange = Math.max(10, Math.floor(correctAnswer * 0.4))
+    const offset = Math.floor(Math.random() * variationRange) + 1
     const incorrectAnswer =
       Math.random() > 0.5
         ? correctAnswer + offset
@@ -39,6 +43,14 @@ export const generateMultiplicationQuestion = (): Question => {
   }
 }
 
-export const generateGame = ({ size }: { size: number }): Question[] => {
-  return Array.from({ length: size }, () => generateMultiplicationQuestion())
+export const generateGame = ({
+  size,
+  maxNumber = 10,
+}: {
+  size: number
+  maxNumber?: number
+}): Question[] => {
+  return Array.from({ length: size }, () =>
+    generateMultiplicationQuestion(maxNumber),
+  )
 }

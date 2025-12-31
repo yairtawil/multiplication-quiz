@@ -11,14 +11,46 @@ import {
   Typography,
   useTheme,
 } from '@mui/material'
-import { VolumeDown, VolumeUp } from '@mui/icons-material'
-import { useSetAtom } from 'jotai'
-import { themeAtom } from '../state/ui.ts'
+import {
+  VolumeDown,
+  VolumeUp,
+  VolumeOff,
+  RestartAlt,
+} from '@mui/icons-material'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { themeAtom, volumeAtom } from '../state/ui.ts'
 import { ThemeKey } from '../types/ui.ts'
+import {
+  answerTimesAtom,
+  currentQuestionAtom,
+  difficultyAtom,
+  gamePhaseAtom,
+  questionsAtom,
+} from '../state/game.ts'
+import { GamePhase } from '../types/game.ts'
 
 const SearchAppBar: React.FC = () => {
   const theme = useTheme()
   const setThemeKey = useSetAtom(themeAtom)
+  const gamePhase = useAtomValue(gamePhaseAtom)
+  const setGamePhase = useSetAtom(gamePhaseAtom)
+  const setQuestions = useSetAtom(questionsAtom)
+  const setDifficulty = useSetAtom(difficultyAtom)
+  const setAnswerTimes = useSetAtom(answerTimesAtom)
+  const setCurrentQuestionIndex = useSetAtom(currentQuestionAtom)
+  const [volume, setVolume] = useAtom(volumeAtom)
+
+  const handleRestartGame = () => {
+    setQuestions([])
+    setDifficulty(null)
+    setAnswerTimes([])
+    setCurrentQuestionIndex(0)
+    setGamePhase(GamePhase.MENU)
+  }
+
+  const handleVolumeChange = (_event: Event, newValue: number | number[]) => {
+    setVolume(newValue as number)
+  }
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -45,6 +77,19 @@ const SearchAppBar: React.FC = () => {
             🌸 Multiplication Quiz 🌸
           </Typography>
 
+          {/* Restart Game Button - Only show when game is active */}
+          {gamePhase === GamePhase.GAME && (
+            <Button
+              variant="contained"
+              color="warning"
+              startIcon={<RestartAlt />}
+              onClick={handleRestartGame}
+              sx={{ mr: 2 }}
+            >
+              Restart Game
+            </Button>
+          )}
+
           {/* Volume Control */}
           <Stack
             spacing={2}
@@ -52,48 +97,23 @@ const SearchAppBar: React.FC = () => {
             sx={{ alignItems: 'center', width: 250, mr: 2 }}
           >
             <VolumeDown />
-            <Slider aria-label="Volume" />
-            <VolumeUp />
+            <Slider
+              aria-label="Volume"
+              value={volume}
+              onChange={handleVolumeChange}
+              min={0}
+              max={100}
+            />
+            {volume === 0 ? <VolumeOff /> : <VolumeUp />}
           </Stack>
 
           {/* Theme Selector Button Group */}
-          <ButtonGroup
-            variant="outlined"
-            sx={{
-              backgroundColor: theme.palette.background.default,
-              border: `1px solid ${theme.palette.divider}`,
-            }}
-          >
-            <Button
-              onClick={() => setThemeKey(ThemeKey.boys)}
-              sx={{
-                color: '#1E88E5', // Boys theme color
-                borderColor: '#1E88E5',
-                '&:hover': { backgroundColor: 'rgba(30, 136, 229, 0.1)' },
-              }}
-            >
-              Boys
+          <ButtonGroup variant="outlined">
+            <Button onClick={() => setThemeKey(ThemeKey.colorful)}>
+              Colorful
             </Button>
-            <Button
-              onClick={() => setThemeKey(ThemeKey.girls)}
-              sx={{
-                color: '#EC407A', // Girls theme color
-                borderColor: '#EC407A',
-                '&:hover': { backgroundColor: 'rgba(236, 64, 122, 0.1)' },
-              }}
-            >
-              Girls
-            </Button>
-            <Button
-              onClick={() => setThemeKey(ThemeKey.dark)}
-              sx={{
-                color: '#424242', // Dark theme color
-                borderColor: '#424242',
-                '&:hover': { backgroundColor: 'rgba(66, 66, 66, 0.1)' },
-              }}
-            >
-              Dark
-            </Button>
+            <Button onClick={() => setThemeKey(ThemeKey.light)}>Light</Button>
+            <Button onClick={() => setThemeKey(ThemeKey.dark)}>Dark</Button>
           </ButtonGroup>
         </Toolbar>
       </AppBar>

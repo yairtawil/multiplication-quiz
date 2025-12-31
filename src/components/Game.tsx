@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, Button, Grid, Paper, Typography } from '@mui/material'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import {
@@ -7,6 +7,7 @@ import {
   durationAtom,
   questionsAtom,
 } from '../state/game.ts'
+import { volumeAtom } from '../state/ui.ts'
 import Footer from './Footer.tsx'
 
 interface GameProps {
@@ -23,13 +24,28 @@ const Game: React.FC<GameProps> = ({ onGameComplete }) => {
     useAtom(currentQuestionAtom)
   const setAnswerTimes = useSetAtom(answerTimesAtom)
   const questionDuration = useAtomValue(durationAtom)
+  const volume = useAtomValue(volumeAtom) // Get volume from state (0-100)
 
   // Sounds
   const correctSound = new Audio('/multiplication-quiz/sounds/correct.mp3') // Path to correct answer sound
   const wrongSound = new Audio('/multiplication-quiz/sounds/wrong.mp3') // Path to wrong answer sound
 
+  // Set volume on audio elements (convert 0-100 to 0-1)
+  correctSound.volume = volume / 100
+  wrongSound.volume = volume / 100
+
   const questions = useAtomValue(questionsAtom)
   const currentQuestion = questions[currentQuestionIndex]!
+
+  // Check if timer reaches 0 - Game Over
+  useEffect(() => {
+    if (timer === 0 && feedback === '') {
+      // Timer ran out, game over
+      setTimeout(() => {
+        onGameComplete()
+      }, 500) // Small delay for better UX
+    }
+  }, [timer, feedback, onGameComplete])
 
   // Handle answer selection
   const handleAnswerClick = (answer: string) => {

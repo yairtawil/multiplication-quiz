@@ -1,5 +1,5 @@
 export enum ThemeKey {
-  girls = 'girls',
-  boys = 'boys',
+  colorful = 'colorful',
+  light = 'light',
   dark = 'dark',
 }
